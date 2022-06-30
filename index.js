@@ -1,80 +1,38 @@
+const links = document.querySelectorAll('ul li');
+const pages = document.querySelectorAll('.page');
+const allBtns = document.querySelectorAll('.close-btn');
 
-
-$(document).ready(function(){
-
-    // wow initiation
-    new WOW().init();
-
-    // navigation bar toggle
-    $('#navbar-toggler').click(function(){
-        $('.navbar-collapse').slideToggle(400);
-    });
-
-    // navbar bg change on scroll
-    $(window).scroll(function(){
-        let pos = $(window).scrollTop();
-        if(pos >= 100){
-            $('.navbar').addClass('cng-navbar');
-        } else {
-            $('.navbar').removeClass('cng-navbar');
+let selectedPageBtn = "";
+for(let i = 0; i < links.length; i++){
+    links[i].addEventListener('click', function(event){
+        event.preventDefault();
+        for(let i = 0; i < pages.length; i++){
+            pages[i].style.display = "none";
         }
+        pages[i].style.display = "block";
+        selectedPageBtn = i;
+        document.querySelector('header').style.filter = "blur(2px)";
     });
+}
 
-    // sample video popup
-    $(document).ready(function() {
-        $('.popup-youtube').magnificPopup({
-            disableOn: 700,
-            type: 'iframe',
-            mainClass: 'mfp-fade',
-            removalDelay: 160,
-            preloader: false,
-    
-            fixedContentPos: false
-        });
+for(let i = 0; i < allBtns.length; i++){
+    allBtns[i].addEventListener('click', function(){
+        allBtns[i].parentElement.style.display = "none";
+        document.querySelector('header').style.filter = "blur(0px)";
     });
-
-    // team carousel 
-    $('.team .owl-carousel').owlCarousel({
-        loop: true,
-        margin: 10,
-        autoplay: true,
-        dots: true,
-        nav: false,
-        responsiveClass: true,
-        responsive:{
-            0:{
-                items: 1
-            }, 
-            600:{
-                items: 2
-            },
-            1000:{
-                items: 3
-            }
-        }
+}
+fetch('http://universities.hipolabs.com/search?name=middle&country=turkey')
+ .then((data) => data.json())
+ .then((completeUniversityData) => {
+     let data1=" "
+     completeUniversityData.map((values) => {
+       data1 = `<div class="page">
+        
+       <h1 class="name">${values.name}</h1>
+        <p class="web_page">${values.web_page}</p>
+        <p class="country">${values.country}</p>
+     </div>`
     });
-
-    // faq accordion
-    $('.faq-head').each(function(){
-        $(this).click(function(){
-            $(this).next().toggleClass('show-faq-content');
-            let icon = $(this).children('span').children("i").attr('class');
-
-            if(icon == "fas fa-plus"){
-                $(this).children('span').html('<i class = "fas fa-minus"></i>');
-            } else {
-                $(this).children('span').html('<i class = "fas fa-plus"></i>');
-            }
-        });
-    });
-
-    // testimonial carousel 
-    $('.testimonial .owl-carousel').owlCarousel({
-        loop: true,
-        autoplay: true,
-        dots: true,
-        nav: false,
-        items: 1
-    });
-
-});
+    document.getElementById("aboutInfo").innerHTML=data1;
+     }
+ )
